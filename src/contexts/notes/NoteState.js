@@ -1,9 +1,16 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import alertContext from '../alert/alertContext';
 import noteContext from './noteContext';
+
 
 const header = "http://localhost:5000/";
 
+
+
 const NoteState = (props) => {
+
+  const context = useContext( alertContext);
+  const {showAlert} = context;
 
   const [note, setNote] = useState([{
     "_id": "656612b5bee6f3f218ee59e7",
@@ -28,8 +35,12 @@ const NoteState = (props) => {
       // body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     const json = await response.json();
+    if (response.status !== 200){
+      showAlert('danger', 'Could not fetch notes. Please check your internet connection');
+    }
     console.log(json);
     setNote(json);
+    
   }
   
   // To add new note
@@ -45,8 +56,14 @@ const NoteState = (props) => {
       body: JSON.stringify({title, description, tag}), // body data type must match "Content-Type" header
     });
     const status = await response.status;
-    console.log("Adding note status: ", status);
-    fetchNote();
+    if(status === 200){
+      fetchNote();
+      showAlert('success', 'Note added successfully');
+
+    }
+    else{
+      showAlert('danger', 'Something went wrong. Please check your network')
+    }
   }
   
   // To delete a note
@@ -62,9 +79,14 @@ const NoteState = (props) => {
       // body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     let status = await response.status;
-    console.log(status)
-    const newnotes=note.filter((val)=> val._id !== id);
-    setNote(newnotes)
+    if(status === 200){
+      const newnotes=note.filter((val)=> val._id !== id);
+      setNote(newnotes)
+      showAlert('warning', 'Note deleted successfully');
+    }
+    else{
+      showAlert('danger', 'Something went wrong. Please check your network')
+    }
   }
 
 
@@ -80,8 +102,14 @@ const NoteState = (props) => {
   
       body: JSON.stringify({title:note.title, description:note.description, tag:note.tag}), // body data type must match "Content-Type" header
     });
-    console.log("status: ",response.status);
-    fetchNote()
+    const status = response.status;
+    if(status === 200){
+      fetchNote()
+      showAlert('info', 'Note updated successfully');
+    }
+    else{
+      showAlert('danger', 'Something went wrong. Please check your network')
+    }
   }
 
   return (
