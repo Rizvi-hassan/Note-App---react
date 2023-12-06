@@ -10,6 +10,8 @@ import { About } from './Components/About'
 import NoteState from './contexts/notes/NoteState'
 import Alert from "./Components/Alert";
 import AlertState from "./contexts/alert/AlertState";
+import Login from "./Components/Login";
+import Register from "./Components/Register";
 
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />}></Route>
                 <Route path="/about" element={<About />}></Route>
+                <Route path="/login" element={<Login />}></Route>
+                <Route path="/register" element={<Register />}></Route>
               </Routes>
             </div>
           </Router>

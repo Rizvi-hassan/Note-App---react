@@ -3,7 +3,7 @@ import alertContext from './alertContext';
 
 
 const AlertState = (props) =>{
-    const types = ['primary', 'secondary', 'success', 'danger', 'warning', 'info']
+    // const types = ['primary', 'secondary', 'success', 'danger', 'warning', 'info']
     // const [type, setType] = useState('primary');
     // const [message, setMessage] = useState('');
     const [alert, setAlert] = useState(null);
@@ -14,7 +14,7 @@ const AlertState = (props) =>{
         setAlert({type, message});
         setTimeout(() => {
             setAlert(null);
-        }, 5000);
+        }, 3000);
     }
 
     return(

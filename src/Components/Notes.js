@@ -6,6 +6,8 @@ const Notes = () => {
     const context = useContext(noteContext);
     const {note, fetchNote, updateNote } = context;
     const ref = useRef(null);
+    const refClose = useRef(null);
+    
 
     const [enote, setENote] = useState({_id:"", user:"", etitle:"", edescription:"", etag:""})
 
@@ -24,7 +26,8 @@ const Notes = () => {
         e.preventDefault();
         // addNote(enote.title, enote.description, enote.tag);
         console.log("updating note...", enote)
-        updateNote({_id:enote._id, user:enote.user, title:enote.etitle, description:enote.edescription, tag: enote.etag})
+        updateNote({_id:enote._id, user:enote.user, title:enote.etitle, description:enote.edescription, tag: enote.etag});
+        refClose.current.click();
     }
 
     const onchange = (e) =>{
@@ -43,7 +46,7 @@ const Notes = () => {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id="exampleModalLabel">Upadte Note</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button ref={refClose} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
 
@@ -74,7 +77,8 @@ const Notes = () => {
             </div>
             <div className='row my-3'>
                 <h2>Your Notes</h2>
-                {note && note.map((val) => {
+                {note.length === 0 && 'No notes to display.'}
+                { note.map((val) => {
                     return <NoteItem key={val._id} note={val} changeNote={changeNote} />
                 })}
             </div></>

@@ -10,17 +10,16 @@ const header = "http://localhost:5000/";
 const NoteState = (props) => {
 
   const context = useContext( alertContext);
+  const [token, setToken] = useState(localStorage.getItem('token'))
   const {showAlert} = context;
 
-  const [note, setNote] = useState([{
-    "_id": "656612b5bee6f3f218ee59e7",
-    "user": "65636e798189d1093b9ced10",
-    "title": "My first note",
-    "description": "This is my first ever note send thorugh my own api",
-    "tag": "personal",
-    "date": "2023-11-28T16:17:57.888Z",
-    "__v": 0
-  }]);
+  const [note, setNote] = useState([]);
+
+
+  //To set auth token of logged in or registered user
+  const saveToken = ()=>{
+    setToken(localStorage.getItem('token'));
+  }
 
   // To fetch notes from api
   const fetchNote = async()=>{
@@ -29,17 +28,22 @@ const NoteState = (props) => {
 
       headers: {
         "Content-Type": "application/json",
-        "auth-token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU2MzZlNzk4MTg5ZDEwOTNiOWNlZDEwIn0sImlhdCI6MTcwMTAxNTg5NH0.R1FGYqVCQSUWogYytXa3iS4hUDaAkNty8KnMuMasIO4"
+        "auth-token" : token
       },
 
       // body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     const json = await response.json();
-    if (response.status !== 200){
+    if (response.status === 200){
+      console.log(json);
+      setNote(json);
+    }
+    else if(response.status === 401){
+      showAlert('danger', 'Unauthorised user! Login first..');
+    }
+    else{
       showAlert('danger', 'Could not fetch notes. Please check your internet connection');
     }
-    console.log(json);
-    setNote(json);
     
   }
   
@@ -50,7 +54,7 @@ const NoteState = (props) => {
   
       headers: {
         "Content-Type": "application/json",
-        "auth-token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU2MzZlNzk4MTg5ZDEwOTNiOWNlZDEwIn0sImlhdCI6MTcwMTAxNTg5NH0.R1FGYqVCQSUWogYytXa3iS4hUDaAkNty8KnMuMasIO4"
+        "auth-token" : token
       },
   
       body: JSON.stringify({title, description, tag}), // body data type must match "Content-Type" header
@@ -73,7 +77,7 @@ const NoteState = (props) => {
   
       headers: {
         "Content-Type": "application/json",
-        "auth-token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU2MzZlNzk4MTg5ZDEwOTNiOWNlZDEwIn0sImlhdCI6MTcwMTAxNTg5NH0.R1FGYqVCQSUWogYytXa3iS4hUDaAkNty8KnMuMasIO4"
+        "auth-token" : token
       },
   
       // body: JSON.stringify(data), // body data type must match "Content-Type" header
@@ -97,7 +101,7 @@ const NoteState = (props) => {
   
       headers: {
         "Content-Type": "application/json",
-        "auth-token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjU2MzZlNzk4MTg5ZDEwOTNiOWNlZDEwIn0sImlhdCI6MTcwMTAxNTg5NH0.R1FGYqVCQSUWogYytXa3iS4hUDaAkNty8KnMuMasIO4"
+        "auth-token" : token
       },
   
       body: JSON.stringify({title:note.title, description:note.description, tag:note.tag}), // body data type must match "Content-Type" header
@@ -113,7 +117,7 @@ const NoteState = (props) => {
   }
 
   return (
-    <noteContext.Provider value={{ note, setNote, addNote, deleteNote, fetchNote, updateNote }} >
+    <noteContext.Provider value={{ note, setNote, addNote, deleteNote, fetchNote, updateNote, saveToken, token }} >
       {props.children}
     </noteContext.Provider>
   )
